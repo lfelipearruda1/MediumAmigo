@@ -1,0 +1,26 @@
+{
+  "name": "luiz",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.1",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.5"
+  },
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node server.js",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7",
+    "sequelize-cli": "^6.6.2",
+    "vite": "^6.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lfelipearruda1/MediumAmigo.git"
+  },
+  "author": "lfelipearruda1 <lfelipearrudacc@gmail.com>"
+}
