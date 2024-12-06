@@ -1,14 +1,14 @@
 const { timeStamp } = require("console");
 
 module.exports = {
-  dialect: 'postgres',
-  host: 'localhost',
-  username: 'docker', // Usuário do banco de dados
-  password: 'docker', // Senha do usuário
-  database: 'sqlnode', // Nome do banco
-  port: 3333, // Porta do PostgreSQL
+  dialect: 'postgres', 
+  host: 'localhost', 
+  username: 'docker', 
+  password: 'docker', 
+  database: 'sqlnode', 
+  port: 5432, 
   define: {
-    timestamps: true, // Cria os campos createdAt e updatedAt automaticamente
-    underscored: true, // Usa snake_case para nomes de tabelas e colunas
+    timestamps: true, 
+    underscored: true,
   },
 };
