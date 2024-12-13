@@ -19,7 +19,9 @@ class User extends Model {
         email: {
           type: DataTypes.STRING,
           allowNull: false,
-          unique: true,
+          unique: {
+            msg: 'Email já existe',
+          },
           defaultValue: '',
           validate: {
             isEmail: {

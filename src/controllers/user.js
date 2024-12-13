@@ -1,17 +1,17 @@
-const user =  require('../models/user')
+import User from '../models/User.js';
 
-module.exports = {
-    async index(req, res){
-        const users = await user.findAll();
+class UserController {
+  async store(req, res) {
+    try {
+      const novoUser = await User.create(req.body);
 
-        return res.json(users);
-    },
-
-    async store(req, res){
-        const { name, email} = req.body;
-
-        const user = await user.create({name, email});
-
-        return res.json(user);
+      return res.json(novoUser);
+    } catch (e) {
+      return res.status(500).json({
+        errors: e.error.map(err => err.message)
+      });
     }
-};
+  }
+}
+
+export default new UserController();

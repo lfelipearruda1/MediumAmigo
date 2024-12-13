@@ -1,5 +1,6 @@
 import express from 'express';
-import home from './routes/home';
+import index from './routes/index';
+import user from './src/routes/user'
 
 class App{
     constructor() {
@@ -10,11 +11,12 @@ class App{
 
     middlewares() {
         this.app.use(express.urlencoded({extended: true}));
-        this.app.use(express.json());   
+        this.app.use(express.json());
     }
 
     routes() {
-        this.app.use('/', home);
+        this.app.use('/', index);
+        this.app.use('/users/', user);
     }
 }
 
