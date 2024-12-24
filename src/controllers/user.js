@@ -4,6 +4,7 @@ class UserController {
   async store(req, res) {
     try {
       const novoUser = await User.create(req.body);
+      const { id, nome, email } = novoUser;
       return res.json(novoUser);
     } catch (e) {
       return res.status(500).json({
@@ -14,9 +15,7 @@ class UserController {
 
   async index(req, res) {
     try {
-      const users = await User.findAll();
-      console.log('USER ID', req.userId);
-      console.log('USER EMAIL', req.userEmail);
+      const users = await User.findAll({attributes: ['id', 'nome', 'email']});
       return res.json(users);
     } catch (e) {
       return res.status(500).json({
@@ -33,6 +32,7 @@ class UserController {
           errors: ['Usuário não encontrado'],
         });
       }
+      const {id, nome, email} = user;
       return res.json(user);
     } catch (e) {
       return res.status(500).json({
@@ -43,13 +43,8 @@ class UserController {
 
   async update(req, res) {
     try {
-      if (!req.params.id) {
-        return res.status(400).json({
-          errors: ['ID não enviado'],
-        });
-      }
 
-      const user = await User.findByPk(req.params.id);
+      const user = await User.findByPk(req.userId);
 
       if (!user) {
         return res.status(400).json({
@@ -58,8 +53,8 @@ class UserController {
       }
 
       const novoDados = await user.update(req.body);
-
-      return res.json(novoDados);
+      const { id, nome, email } = novoDados;
+      return res.json({ id, nome, email });
     } catch (e) {
       return res.status(500).json({
         errors: ['Erro ao atualizar usuário'],
@@ -69,13 +64,8 @@ class UserController {
 
   async delete(req, res) {
     try {
-      if (!req.params.id) {
-        return res.status(400).json({
-          errors: ['ID não enviado'],
-        });
-      }
 
-      const user = await User.findByPk(req.params.id);
+      const user = await User.findByPk(req.userId);
 
       if (!user) {
         return res.status(400).json({
