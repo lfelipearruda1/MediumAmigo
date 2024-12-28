@@ -1,5 +1,5 @@
-const { Model, DataTypes } = require('sequelize');
-const bcryptjs = require('bcryptjs');
+import { Model, DataTypes } from 'sequelize';
+import bcryptjs from 'bcryptjs';
 
 class User extends Model {
   static init(sequelize) {
@@ -68,4 +68,4 @@ class User extends Model {
 
 }
 
-module.exports = User;
+export default User;

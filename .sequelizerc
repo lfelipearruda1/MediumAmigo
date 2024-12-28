@@ -1,6 +1,7 @@
-import { config } from 'dotenv';
-
+const { config } = require('dotenv');
 const { resolve } = require('path');
+
+config();
 
 module.exports = {
   config: resolve(__dirname, 'src', 'config', 'database.js'),

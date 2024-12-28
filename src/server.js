@@ -1,12 +1,14 @@
-const express = require('express');
-const routes = require("./routes");
+import express from 'express';
+import dotenv from 'dotenv';
 
-require('./database/index')
+import './database/index.js';
+import routes from './routes.js';  
 
 const app = express();
 
 app.use(express.json());
-
 app.use(routes);
 
-app.listen(3333);
+app.listen(5432, () => {
+  console.log('Server is running on port 3333');
+});

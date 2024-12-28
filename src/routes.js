@@ -1,9 +1,9 @@
-const express = require('express');
-const user = require('./controllers/user');
+import { Router } from 'express';
+import user from './controllers/user.js'; // Atualize para a sintaxe de importação
 
-const routes =  express.Router();
+const routes = Router();
 
 routes.get('/users', user.index);
 routes.post('/users', user.store);
 
-module.exports = routes;
+export default routes;  // Exportando com 'export default'
