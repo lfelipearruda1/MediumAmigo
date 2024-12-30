@@ -1,5 +1,3 @@
-import { timeStamp } from "console";
-
 export default {
   dialect: 'postgres',
   host: 'localhost',

@@ -1,7 +1,14 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+import './src/database';
+
 import express from 'express';
-import index from './routes/index';
+import index from './src/routes/index';
 import user from './src/routes/user'
-import token from './controllers/token';
+import token from './src/routes/token';
+import usuarioRoutes from './src/routes/usuarioRoutes';
 
 class App{
     constructor() {
@@ -19,6 +26,7 @@ class App{
         this.app.use('/', index);
         this.app.use('/users/', user);
         this.app.use('/tokens/', token);
+        this.app.use('/usuarios/', usuarioRoutes);
     }
 }
 

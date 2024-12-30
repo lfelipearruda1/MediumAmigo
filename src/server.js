@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 
 import './database/index.js';
-import routes from './routes.js';  
+import routes from './routes.js';
 
 const app = express();
 
