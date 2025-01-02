@@ -1,18 +1,40 @@
 import multer from 'multer';
 import multerConfig from '../config/multerConfig';
+import Foto from '../models/foto';
 
 const upload = multer(multerConfig).single('foto');
 
 class FotoController {
-  async store(req, res) {
-    upload(req, res, (err) => {
+  store(req, res) {
+    return upload(req, res, async (err) => {
       if (err) {
         return res.status(400).json({
           errors: [err.code],
         });
       }
 
-      return res.json(req.file);
+      const { originalname, filename } = req.file;
+      const { usuario_id } = req.body;
+
+      if (!usuario_id) {
+        return res.status(400).json({
+          errors: ['Usuário não informado'],
+        });
+      }
+
+      try {
+        const foto = await Foto.create({
+          originalname,
+          filename,
+          usuario_id
+        });
+
+        return res.json(foto);
+      } catch (err) {
+        return res.status(500).json({
+          errors: ['Erro ao salvar a foto'],
+        });
+      }
     });
   }
 }

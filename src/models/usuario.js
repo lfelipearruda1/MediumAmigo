@@ -1,6 +1,6 @@
 import Sequelize, { Model } from 'sequelize';
 
-export default class Aluno extends Model {
+export default class Usuario extends Model {
   static init(sequelize) {
     super.init(
       {
@@ -48,8 +48,23 @@ export default class Aluno extends Model {
       },
       {
         sequelize,
+        tableName: 'usuarios',
+        timestamps: true,
+        underscored: true,
       }
     );
+
+    this.addHook('beforeCreate', (usuario) => {
+      if (usuario.email) {
+        usuario.email = usuario.email.toLowerCase();
+      }
+    });
+    this.addHook('beforeUpdate', (usuario) => {
+      if (usuario.email) {
+        usuario.email = usuario.email.toLowerCase();
+      }
+    });
+    
     return this;
   }
 }
