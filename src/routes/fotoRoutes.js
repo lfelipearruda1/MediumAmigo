@@ -1,4 +1,5 @@
 import { Router } from "express";
+import loginRequired from "../middlewares/loginRequired";
 
 import fotoController from '../controllers/FotoController';
 

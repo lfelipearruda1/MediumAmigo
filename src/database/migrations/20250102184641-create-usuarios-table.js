@@ -3,9 +3,6 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-
-    const { changeColumn } = await import('sequelize').then(mod => mod.queryInterface);
-
     await queryInterface.changeColumn('usuarios', 'email', {
       type: Sequelize.STRING,
       allowNull: false,
@@ -14,6 +11,10 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    
-  }
+    await queryInterface.changeColumn('usuarios', 'email', {
+      type: Sequelize.STRING,
+      allowNull: true,
+      unique: false,
+    });
+  },
 };
