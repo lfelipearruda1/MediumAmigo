@@ -8,15 +8,43 @@ function Register() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+    const validateForm = () => {
+        const newErrors: { [key: string]: string } = {};
+
+        if (!name.trim()) {
+            newErrors.name = "Nome obrigatório";
+        }
+        if (!email.trim()) {
+            newErrors.email = "E-mail obrigatório";
+        }
+        if (!password.trim()) {
+            newErrors.password = "Senha obrigatória";
+        }
+        if (password !== confirmPassword) {
+            newErrors.confirmPassword = "As senhas não coincidem";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0; // Retorna `true` se não houver erros
+    };
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!validateForm()) {
+            return;
+        }
+
         try {
             console.log("Attempting to register with:", { name, email, password });
-            const response = await axios.post("http://localhost:8001/api/auth/register", { 
-                name, 
-                email, 
-                password 
+            const response = await axios.post("http://localhost:8001/api/auth/register", {
+                name,
+                email,
+                password,
+                confirmPassword,
             });
             console.log("Registration successful:", response.data);
             alert("Cadastro realizado com sucesso!");
@@ -28,12 +56,12 @@ function Register() {
 
     return (
         <main className="flex items-center justify-center min-h-screen bg-gray-100">
-            <form 
-                onSubmit={handleRegister} 
+            <form
+                onSubmit={handleRegister}
                 className="bg-white shadow-lg rounded-lg p-8 max-w-sm w-full"
             >
                 <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">CADASTRAR-SE</h1>
-                
+
                 <div className="mb-4">
                     <label
                         htmlFor="name"
@@ -49,6 +77,9 @@ function Register() {
                         className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Digite seu nome"
                     />
+                    {errors.name && (
+                        <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                    )}
                 </div>
 
                 <div className="mb-4">
@@ -66,9 +97,12 @@ function Register() {
                         className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Digite seu email"
                     />
+                    {errors.email && (
+                        <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                    )}
                 </div>
 
-                <div className="mb-6">
+                <div className="mb-4">
                     <label
                         htmlFor="password"
                         className="block text-sm font-medium text-gray-700 mb-2"
@@ -83,6 +117,29 @@ function Register() {
                         className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Digite sua senha"
                     />
+                    {errors.password && (
+                        <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                    )}
+                </div>
+
+                <div className="mb-6">
+                    <label
+                        htmlFor="confirmPassword"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                        Confirme sua senha
+                    </label>
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Confirme sua senha"
+                    />
+                    {errors.confirmPassword && (
+                        <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+                    )}
                 </div>
 
                 <button
