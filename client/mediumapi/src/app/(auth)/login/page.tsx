@@ -1,13 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { makeRequest} from "../../../../axios";
+import { useState, useEffect } from "react";
+import { makeRequest } from "../../../../axios";
+import { useRouter } from "next/router";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [isClient, setIsClient] = useState(false);
+    const router = useRouter;
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,15 +30,19 @@ function Login() {
         }
 
         try {
-            console.log("Attempting to log in with:", { email, password });
             const response = await makeRequest.post("http://localhost:8001/api/auth/login", { email, password });
-            console.log("Login successful:", response.data);
             alert("Login realizado com sucesso!");
+            if (isClient) {
+                router.push("/dashboard");
+            }
         } catch (err) {
-            console.error("Login failed:", err);
             setError("Email ou senha incorretos. Tente novamente.");
         }
     };
+
+    if (!isClient) {
+        return null;
+    }
 
     return (
         <main className="flex items-center justify-center min-h-screen bg-gray-100">
