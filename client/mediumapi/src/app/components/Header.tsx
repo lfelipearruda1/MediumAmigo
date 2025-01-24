@@ -64,7 +64,7 @@ function Header() {
                     </span>
 
                     {showMenu && (
-                        <div className="absolute top-12 right-0 bg-white shadow-lg border rounded-md w-40 p-2">
+                        <div className="absolute top-12 right-0 bg-white shadow-lg border rounded-md w-40 p-2 z-10">
                             <button
                                 className="w-full text-gray-700 hover:text-gray-900 text-left py-2 px-4 transition-colors duration-200"
                                 onClick={() => alert('Editar Perfil')}
