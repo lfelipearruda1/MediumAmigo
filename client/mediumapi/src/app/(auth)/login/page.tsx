@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import axios from "axios"; // Importando axios diretamente
+import axios from "axios";
 import { useRouter } from "next/navigation";
 
-const Login = () => {
+const LoginPage = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -31,7 +31,6 @@ const Login = () => {
     }
 
     try {
-      // Usando a URL completa da API, incluindo o protocolo
       const response = await axios.post("http://localhost:8001/api/auth/login", { email, password });
       console.log("Login bem-sucedido:", response.data);
 
@@ -44,8 +43,12 @@ const Login = () => {
     }
   };
 
+  const handleSkipLogin = () => {
+    router.push("/dashboard");
+  };
+
   if (!isClient) {
-    return null; // Evita problemas durante a renderização no servidor
+    return null;
   }
 
   return (
@@ -103,6 +106,14 @@ const Login = () => {
           ENTRAR
         </button>
 
+        <button
+          type="button"
+          onClick={handleSkipLogin}
+          className="w-full mt-4 bg-gray-300 text-gray-800 font-medium py-2 rounded-lg hover:bg-gray-400 transition duration-200"
+        >
+          PULAR LOGIN
+        </button>
+
         <p className="text-center text-sm text-gray-600 mt-4">
           Não tem uma conta?{" "}
           <Link href="/register" className="text-blue-500 font-medium hover:underline">
@@ -114,4 +125,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;
