@@ -1,48 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import Link from "next/link";
+import { FaAlignLeft, FaUserFriends } from "react-icons/fa";
 
 function Sidebar() {
-  const [user, setUser] = useState(null);
-  const router = useRouter();
+    return (
+        <aside className="w-64 bg-gray-800 h-full text-white flex flex-col p-4">
+            <nav className="space-y-4">
+                {/* Perfil do Usuário */}
+                <Link href="/profile" className="flex items-center gap-3 p-2 hover:bg-gray-700 rounded">
+                    <img
+                        src="/profile-placeholder.png" // Alterar para o caminho da imagem do perfil
+                        alt="Foto do Usuário"
+                        className="w-10 h-10 rounded-full"
+                    />
+                    <span className="text-lg font-medium">Usuário</span>
+                </Link>
 
-  const loadUserData = async () => {
-    try {
-      const response = await fetch('/api/user');  
-      const data = await response.json();
-      setUser(data);
-    } catch (error) {
-      console.error('Erro ao carregar os dados do usuário:', error);
-    }
-  };
+                {/* Link para Amigos */}
+                <Link href="/friends" className="flex items-center gap-3 p-2 hover:bg-gray-700 rounded">
+                    <FaUserFriends size={20} />
+                    <span className="text-base">Amigos</span>
+                </Link>
 
-  useEffect(() => {
-    loadUserData();
-  }, []);
-
-  return (
-    <div className="sidebar">
-      <div className="user-info">
-        {user && (
-          <>
-    <img
-        src={user?.userImg || '/default-profile.png'}
-        alt="User Avatar"
-        className="user-img"
-    />
-    <h3>{user?.username || "Usuário Desconhecido"}</h3>
-          </>
-        )}
-      </div>
-      <nav className="nav-links">
-        <ul>
-          <li onClick={() => router.push('/dashboard')}>Dashboard</li>
-          <li onClick={() => router.push('/profile')}>Perfil</li>
-          <li onClick={() => router.push('/settings')}>Configurações</li>
-          <li onClick={() => router.push('/logout')}>Sair</li>
-        </ul>
-      </nav>
-    </div>
-  );
+                {/* Link para Feed */}
+                <Link href="/feed" className="flex items-center gap-3 p-2 hover:bg-gray-700 rounded">
+                    <FaAlignLeft size={20} />
+                    <span className="text-base">Feed</span>
+                </Link>
+            </nav>
+        </aside>
+    );
 }
 
 export default Sidebar;

@@ -2,109 +2,116 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { makeRequest } from "../../../../axios";
-import { useRouter } from "next/router";
+import axios from "axios"; // Importando axios diretamente
+import { useRouter } from "next/navigation";
 
-function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [isClient, setIsClient] = useState(false);
-    const router = useRouter;
+const Login = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [isClient, setIsClient] = useState<boolean>(false);
+  const router = useRouter();
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError("");
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
 
-        if (!email) {
-            setError("O campo de email é obrigatório.");
-            return;
-        }
-        if (!password) {
-            setError("O campo de senha é obrigatório.");
-            return;
-        }
-
-        try {
-            const response = await makeRequest.post("http://localhost:8001/api/auth/login", { email, password });
-            alert("Login realizado com sucesso!");
-            if (isClient) {
-                router.push("/dashboard");
-            }
-        } catch (err) {
-            setError("Email ou senha incorretos. Tente novamente.");
-        }
-    };
-
-    if (!isClient) {
-        return null;
+    if (!email.trim()) {
+      setError("O campo de email é obrigatório.");
+      return;
     }
 
-    return (
-        <main className="flex items-center justify-center min-h-screen bg-gray-100">
-            <form
-                className="bg-white shadow-lg rounded-lg p-8 max-w-sm w-full"
-                onSubmit={handleLogin}
-            >
-                <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">LOGIN</h1>
+    if (!password.trim()) {
+      setError("O campo de senha é obrigatório.");
+      return;
+    }
 
-                {error && (
-                    <div className="mb-4 text-red-500 text-sm font-medium text-center">
-                        {error}
-                    </div>
-                )}
+    try {
+      // Usando a URL completa da API, incluindo o protocolo
+      const response = await axios.post("http://localhost:8001/api/auth/login", { email, password });
+      console.log("Login bem-sucedido:", response.data);
 
-                <div className="mb-4">
-                    <label
-                        htmlFor="email"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                        Email
-                    </label>
-                    <input
-                        type="text"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Digite seu email"
-                    />
-                </div>
-                <div className="mb-6">
-                    <label
-                        htmlFor="password"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                        Senha
-                    </label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Digite sua senha"
-                    />
-                </div>
-                <button
-                    type="submit"
-                    className="w-full bg-blue-500 text-white font-medium py-2 rounded-lg hover:bg-blue-600 transition duration-200"
-                >
-                    ENTRAR
-                </button>
-                <p className="text-center text-sm text-gray-600 mt-4">
-                    Não tem uma conta?{" "}
-                    <Link href="/register" className="text-blue-500 font-medium hover:underline">
-                        Cadastrar-se
-                    </Link>
-                </p>
-            </form>
-        </main>
-    );
-}
+      if (isClient) {
+        router.push("/dashboard");
+      }
+    } catch (err: any) {
+      console.error("Erro ao fazer login:", err);
+      setError("Email ou senha incorretos. Tente novamente.");
+    }
+  };
+
+  if (!isClient) {
+    return null; // Evita problemas durante a renderização no servidor
+  }
+
+  return (
+    <main className="flex items-center justify-center min-h-screen bg-gray-100">
+      <form
+        className="bg-white shadow-lg rounded-lg p-8 max-w-sm w-full"
+        onSubmit={handleLogin}
+      >
+        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">LOGIN</h1>
+
+        {error && (
+          <div className="mb-4 text-red-500 text-sm font-medium text-center">
+            {error}
+          </div>
+        )}
+
+        <div className="mb-4">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Email
+          </label>
+          <input
+            type="text"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Digite seu email"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Senha
+          </label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Digite sua senha"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white font-medium py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+        >
+          ENTRAR
+        </button>
+
+        <p className="text-center text-sm text-gray-600 mt-4">
+          Não tem uma conta?{" "}
+          <Link href="/register" className="text-blue-500 font-medium hover:underline">
+            Cadastrar-se
+          </Link>
+        </p>
+      </form>
+    </main>
+  );
+};
 
 export default Login;
