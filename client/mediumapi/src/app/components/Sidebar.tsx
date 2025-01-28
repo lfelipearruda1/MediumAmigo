@@ -2,15 +2,14 @@ import Link from "next/link";
 import { FaAlignLeft, FaUserFriends, FaBookmark } from "react-icons/fa";
 
 function Sidebar() {
-    // Exemplo de lógica para verificar a imagem do usuário
-    const userImage = null; // Substitua por lógica real para verificar a imagem do usuário
+    const userImage = null;
     const defaultImage = "https://img.freepik.com/free-icon/user_318-159711.jpg";
 
     return (
         <aside className="w-64 bg-gray-800 text-white min-h-screen p-4 pt-8">
             <div className="flex items-center gap-4 mb-8">
                 <img
-                    src={userImage || defaultImage} // Use o defaultImage se userImage for null ou undefined
+                    src={userImage || defaultImage} 
                     alt="Foto do Usuário"
                     className="w-12 h-12 rounded-full border-2 border-gray-300"
                 />
