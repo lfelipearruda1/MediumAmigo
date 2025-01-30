@@ -1,27 +1,30 @@
-import { useState } from "react";
-import { FaBookmark, FaHeart, FaComment } from "react-icons/fa";
+import { useEffect, useState } from "react";
 import Post from "./Post";
+import { makeRequest } from "../../../axios";
 
-const posts = [
-  {
-    id: 1,
-    post_desc: "teste",
-    img: "",
-    username: "user",
-    userImg: "",
-  },
-  {
-    id: 2,
-    post_desc: "teste",
-    img: "https://png.pngtree.com/background/20230408/original/pngtree-natural-landscape-in-the-forest-with-waterfall-flowing-through-picture-image_2337676.jpg",
-    username: "user",
-    userImg: "",
-  }
-];
+interface IPost {
+  id: number;
+  post_desc: string;
+  img: string;
+  username: string;
+  userImg: string;
+  created_at: string;
+}
 
 function Feed() {
+  
+  const [posts, setPosts] = useState<IPost[]|undefined>(undefined)
+
+  useEffect(()=>{
+    makeRequest.get("post/").then((res)=>{
+      setPosts(res.data.data)
+    }).catch((err)=>{
+      console.log(err)
+    })
+  },[])
+
   return <div>
-    {posts.map((post, id) => {
+    {posts?.map((post, id) => {
       return(
         <Post post={post} key={id}/>
       )

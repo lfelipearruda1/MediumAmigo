@@ -7,6 +7,7 @@ interface IPost {
   img: string;
   username: string;
   userImg: string;
+  created_at: string;
 }
 
 function Post(props: { post: IPost }) {
@@ -60,6 +61,7 @@ function Post(props: { post: IPost }) {
             className="w-12 h-12 rounded-full object-cover"
           />
           <span className="font-semibold text-lg">{username}</span>
+          <span className='text-xs'>{created_at}</span>
         </div>
 
         {/* Data */}
