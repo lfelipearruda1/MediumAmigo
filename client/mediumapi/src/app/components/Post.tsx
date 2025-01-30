@@ -11,25 +11,23 @@ interface IPost {
 }
 
 function Post(props: { post: IPost }) {
-  const { post_desc, img, username, userImg, id } = props.post;
+  const { post_desc, img, username, userImg, id, created_at } = props.post;
 
-  // Estados para "curtir" e "salvar"
   const [likedPosts, setLikedPosts] = useState<{ [key: number]: boolean }>({});
   const [likeCounts, setLikeCounts] = useState<{ [key: number]: number }>({});
   const [savedPosts, setSavedPosts] = useState<{ [key: number]: boolean }>({});
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState("");
 
-  // Função para lidar com "curtir"
   const handleLike = (id: number) => {
-    setLikedPosts((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-    setLikeCounts((prev) => ({
-      ...prev,
-      [id]: prev[id] ? prev[id] + (likedPosts[id] ? -1 : 1) : 1,
-    }));
+    setLikedPosts((prev) => {
+      const isLiked = !prev[id];
+      setLikeCounts((count) => ({
+        ...count,
+        [id]: isLiked ? (count[id] || 0) + 1 : Math.max((count[id] || 1) - 1, 0),
+      }));
+      return { ...prev, [id]: isLiked };
+    });
   };
 
   const handleSave = (id: number) => {
@@ -39,7 +37,6 @@ function Post(props: { post: IPost }) {
     }));
   };
 
-  // Funções para o modal de imagem
   const openImageModal = (img: string) => {
     setModalImage(img);
     setIsImageModalOpen(true);
@@ -50,10 +47,12 @@ function Post(props: { post: IPost }) {
     setModalImage("");
   };
 
+  let date = new Date(created_at);
+  let formatedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
       <header className="flex items-start mb-4">
-        {/* Foto de Perfil do Usuário e Nome */}
         <div className="flex items-center gap-4 mr-4">
           <img
             src={userImg || "https://img.freepik.com/free-icon/user_318-159711.jpg"}
@@ -61,23 +60,18 @@ function Post(props: { post: IPost }) {
             className="w-12 h-12 rounded-full object-cover"
           />
           <span className="font-semibold text-lg">{username}</span>
-          <span className='text-xs'>{created_at}</span>
         </div>
-
-        {/* Data */}
         <div className="ml-auto text-sm text-gray-500">
-          <span>06/01/2024</span>
+          <span>{formatedDate}</span>
         </div>
       </header>
 
-      {/* Descrição do Post */}
       {post_desc && (
         <div className="mb-4">
           <p className="text-gray-700">{post_desc}</p>
         </div>
       )}
 
-      {/* Imagem do Post */}
       {img && (
         <div className="cursor-pointer" onClick={() => openImageModal(img)}>
           <img
@@ -88,7 +82,6 @@ function Post(props: { post: IPost }) {
         </div>
       )}
 
-      {/* Botões de interação */}
       <div className="mt-4 flex gap-4 text-gray-500">
         <button
           onClick={() => handleLike(id)}
@@ -117,7 +110,6 @@ function Post(props: { post: IPost }) {
         </button>
       </div>
 
-      {/* Modal de imagem */}
       {isImageModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="relative">
