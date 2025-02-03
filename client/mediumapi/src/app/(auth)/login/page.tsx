@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
+import { makeRequest } from "../../../../axios";
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>("");
@@ -31,12 +31,9 @@ const LoginPage = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8001/api/auth/login", { email, password });
+      const response = await makeRequest.post("/api/auth/login", { email, password });
       console.log("Login bem-sucedido:", response.data);
-
-      if (isClient) {
-        router.push("/dashboard");
-      }
+      router.push("/dashboard");
     } catch (err: any) {
       console.error("Erro ao fazer login:", err);
       setError("Email ou senha incorretos. Tente novamente.");
@@ -105,15 +102,7 @@ const LoginPage = () => {
         >
           ENTRAR
         </button>
-
-        <button
-          type="button"
-          onClick={handleSkipLogin}
-          className="w-full mt-4 bg-gray-300 text-gray-800 font-medium py-2 rounded-lg hover:bg-gray-400 transition duration-200"
-        >
-          PULAR LOGIN
-        </button>
-
+        
         <p className="text-center text-sm text-gray-600 mt-4">
           Não tem uma conta?{" "}
           <Link href="/register" className="text-blue-500 font-medium hover:underline">

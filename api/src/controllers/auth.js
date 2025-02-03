@@ -59,16 +59,20 @@ export const login = (req, res) => {
         { expiresIn: "7d" }
       );
 
-      return res.status(200).json({
-        msg: "Login realizado com sucesso!",
-        data: {
-          user: { id: user.id, username: user.username, email: user.email },
-          token: {
-            token,
-            refreshToken,
-          },
-        },
-      });
+      const { password: _, ...userWithoutPassword } = user;
+
+      return res
+        .cookie("accessToken", token, {
+          httpOnly: true
+        })
+        .cookie("refreshToken", refreshToken, {
+          httpOnly: true
+        })
+        .status(200)
+        .json({
+          msg: "Login realizado com sucesso!",
+          user: userWithoutPassword,
+        });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ msg: "Erro ao gerar o token, tente novamente." });
