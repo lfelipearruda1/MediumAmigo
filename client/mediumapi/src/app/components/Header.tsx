@@ -12,9 +12,11 @@ function Header() {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
 
     useEffect(() => {
-        const value = localStorage.getItem("mediumapi:user");
-        if (value) {
-            setUser(JSON.parse(value));
+        if (typeof window !== "undefined") {
+            const value = localStorage.getItem("mediumapi:user");
+            if (value) {
+                setUser(JSON.parse(value));
+            }
         }
     }, []);
 
@@ -23,15 +25,17 @@ function Header() {
     };
 
     const handleLogout = () => {
-        setShowLogoutModal(true); // Abre o modal de confirmação
+        setShowLogoutModal(true);
     };
 
     const confirmLogout = () => {
-        localStorage.removeItem("mediumapi:user");
+        if (typeof window !== "undefined") {
+            localStorage.removeItem("mediumapi:user");
+        }
         setUser({ username: "", userImg: "" });
         setShowMenu(false);
         setShowLogoutModal(false);
-        router.push("/login"); // Redireciona para a página de login
+        router.replace("/login"); // Aqui está a correção
     };
 
     return (
@@ -93,7 +97,6 @@ function Header() {
                 </div>
             </header>
 
-            {/* MODAL DE CONFIRMAÇÃO */}
             {showLogoutModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-96">
