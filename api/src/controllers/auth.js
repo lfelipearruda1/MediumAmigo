@@ -1,7 +1,8 @@
-import connect from '../connect.js';
+import connect from "../connect.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+// Função de registro
 export const register = (req, res) => {
   const { username, email, password, confirmPassword } = req.body;
 
@@ -10,26 +11,27 @@ export const register = (req, res) => {
   if (!password) return res.status(422).json({ msg: "A senha é obrigatória." });
   if (password !== confirmPassword) return res.status(422).json({ msg: "As senhas não são iguais." });
 
-  db.query("SELECT email FROM users WHERE email = $1", [email], async (error, data) => {
+  connect.query("SELECT email FROM users WHERE email = $1", [email], async (error, data) => {
     if (error) return res.status(500).json({ msg: "Erro no servidor, tente novamente mais tarde." });
     if (data.rows.length > 0) return res.status(422).json({ msg: "Este email já está sendo utilizado." });
 
     const passwordHash = await bcrypt.hash(password, 8);
 
-    db.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)", [username, email, passwordHash], (error) => {
+    connect.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)", [username, email, passwordHash], (error) => {
       if (error) return res.status(500).json({ msg: "Erro no servidor, tente novamente mais tarde." });
       return res.status(201).json({ msg: "Cadastro concluído com sucesso!" });
     });
   });
 };
 
+// Função de login
 export const login = (req, res) => {
   const { email, password } = req.body;
 
   if (!email) return res.status(422).json({ msg: "O email é obrigatório." });
   if (!password) return res.status(422).json({ msg: "A senha é obrigatória." });
 
-  db.query("SELECT * FROM users WHERE email = $1", [email], async (error, data) => {
+  connect.query("SELECT * FROM users WHERE email = $1", [email], async (error, data) => {
     if (error) {
       console.log(error);
       return res.status(500).json({ msg: "Erro no servidor, tente novamente mais tarde." });
@@ -47,35 +49,80 @@ export const login = (req, res) => {
     }
 
     try {
-      const token = jwt.sign(
-        { id: user.id, username: user.username, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-      );
-
       const refreshToken = jwt.sign(
         { id: user.id },
-        process.env.JWT_REFRESH_SECRET,
+        process.env.REFRESH_SECRET,
         { expiresIn: "7d" }
       );
 
-      const { password: _, ...userWithoutPassword } = user;
+      const token = jwt.sign(
+        { id: user.id },
+        process.env.TOKEN_SECRET,
+        { expiresIn: "1h" }
+      );
 
-      return res
+      delete user.password;
+
+      res
         .cookie("accessToken", token, {
-          httpOnly: true
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
         })
         .cookie("refreshToken", refreshToken, {
-          httpOnly: true
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
         })
         .status(200)
         .json({
-          msg: "Login realizado com sucesso!",
-          user: userWithoutPassword,
+          msg: "Usuário logado com sucesso!",
+          user,
         });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ msg: "Erro ao gerar o token, tente novamente." });
+
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ msg: "Aconteceu algum erro no servidor, tente novamente mais tarde." });
     }
   });
+};
+
+export const logout = (req, res) => {
+  return res
+    .clearCookie("accessToken", { secure: true, sameSite: "none" })
+    .clearCookie("refreshToken", { secure: true, sameSite: "none" })
+    .status(200)
+    .json({ msg: "Logout efetuado com sucesso" });
+};
+
+export const refresh = (req, res) => {
+  try {
+    const authHeader = req.headers.cookie;
+    if (!authHeader) return res.status(401).json({ msg: "Nenhum cookie encontrado." });
+
+    const refreshCookie = authHeader.split("; ").find(cookie => cookie.startsWith("refreshToken="));
+    if (!refreshCookie) return res.status(401).json({ msg: "Token de atualização não encontrado." });
+
+    const refreshToken = refreshCookie.split("=")[1];
+
+    jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, decoded) => {
+      if (err) return res.status(403).json({ msg: "Token inválido ou expirado." });
+
+      const newToken = jwt.sign(
+        { id: decoded.id },
+        process.env.TOKEN_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      return res
+        .cookie("accessToken", newToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+        })
+        .status(200)
+        .json({ msg: "Token renovado com sucesso!" });
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ msg: "Erro ao processar a requisição." });
+  }
 };
