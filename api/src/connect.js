@@ -17,4 +17,4 @@ db.connect()
     .then(() => console.log('Conexão com o banco de dados bem-sucedida!'))
     .catch((error) => console.error('Erro ao conectar no banco de dados:', error.message));
 
-export default db;
+export default db; 

@@ -1,4 +1,4 @@
-import { db } from "../connect.js";
+import db from "../connect.js";
 
 export const creatPost = (req, res) => {
   const { post_desc, img, userId } = req.body;

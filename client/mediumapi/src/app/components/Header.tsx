@@ -2,41 +2,32 @@
 
 import { FaSearch, FaBell } from "react-icons/fa";
 import { TbMessageCircle } from "react-icons/tb";
-import { useState, useEffect } from "react";
+import { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { makeRequest } from "../../../axios";
+import { UserContext } from "../context/UserContext";
 
 function Header() {
-    const router = useRouter();
-    const [user, setUser] = useState({ username: "", userImg: "" });
+    const { user, setUser } = useContext(UserContext);
     const [showMenu, setShowMenu] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const value = localStorage.getItem("mediumapi:user");
-            if (value) {
-                setUser(JSON.parse(value));
-            }
-        }
-    }, []);
+    const router = useRouter();
 
     const toggleMenu = () => {
         setShowMenu((prev) => !prev);
     };
 
-    const handleLogout = () => {
-        setShowLogoutModal(true);
-    };
-
-    const confirmLogout = () => {
-        if (typeof window !== "undefined") {
+    const mutation = useMutation({
+        mutationFn: async () => {
+            return await makeRequest.post("auth/logout").then((res) => res.data);
+        },
+        onSuccess: () => {
+            setUser(null);
             localStorage.removeItem("mediumapi:user");
-        }
-        setUser({ username: "", userImg: "" });
-        setShowMenu(false);
-        setShowLogoutModal(false);
-        router.replace("/login"); // Aqui está a correção
-    };
+            router.push("/login");
+        },
+    });
 
     return (
         <>
@@ -87,7 +78,7 @@ function Header() {
                                 </button>
                                 <button
                                     className="w-full text-red-600 hover:text-red-800 text-left py-2 px-4 transition-colors duration-200"
-                                    onClick={handleLogout}
+                                    onClick={() => setShowLogoutModal(true)}
                                 >
                                     Logout
                                 </button>
@@ -111,7 +102,7 @@ function Header() {
                             </button>
                             <button
                                 className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
-                                onClick={confirmLogout}
+                                onClick={() => mutation.mutate()}
                             >
                                 Confirmar Logout
                             </button>
