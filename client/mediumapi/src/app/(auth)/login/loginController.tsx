@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { makeRequest } from "../../../../axios";
@@ -9,12 +7,16 @@ export const useLoginController = () => {
   const [email, setEmail] = useState<string>("teste@gmail.com");
   const [password, setPassword] = useState<string>("12345");
   const [error, setError] = useState<string>("");
-  const [isClient, setIsClient] = useState<boolean>(false);
-  const {setUser} = useContext(UserContext)
+  const [isClient, setIsClient] = useState<boolean>(false); // Declaração do estado isClient
+
+  const { setUser } = useContext(UserContext);
   const router = useRouter();
 
   useEffect(() => {
-    setIsClient(true);
+    // Verifica se o componente está sendo renderizado no lado do cliente
+    if (typeof window !== "undefined") {
+      setIsClient(true);
+    }
   }, []);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -33,17 +35,19 @@ export const useLoginController = () => {
 
     try {
       const response = await makeRequest.post("http://localhost:8001/api/auth/login", { email, password });
-      console.log("Login bem-sucedido:", response.data.user);
-      setUser(response.data.user);
-      router.push("/dashboard");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error("Erro ao fazer login:", err.message);
-        setError("Email ou senha incorretos. Tente novamente.");
+      
+      console.log("Login bem-sucedido:", response.data); // Verifique a estrutura da resposta
+      if (response.data?.user) {
+        setUser(response.data.user);
+        // Armazenar token, caso seja necessário
+        // localStorage.setItem("token", response.data.token); // Exemplo de como armazenar o token
+        router.push("/dashboard");
       } else {
-        console.error("Erro desconhecido", err);
-        setError("Ocorreu um erro desconhecido. Tente novamente.");
+        setError("Ocorreu um erro ao realizar o login.");
       }
+    } catch (err) {
+      console.error("Erro ao fazer login:", err);
+      setError("Email ou senha incorretos. Tente novamente.");
     }
   };
 
@@ -59,6 +63,6 @@ export const useLoginController = () => {
     error,
     handleLogin,
     handleSkipLogin,
-    isClient,
+    isClient, 
   };
 };
