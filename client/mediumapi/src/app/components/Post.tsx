@@ -75,7 +75,7 @@ function Post(props: { post: IPost }) {
       {img && (
         <div className="cursor-pointer" onClick={() => openImageModal(img)}>
           <img
-            src={img}
+            src={`./upload/${img}`}
             alt="Imagem do Post"
             className="w-64 h-64 object-cover rounded-lg ml-auto"
           />
