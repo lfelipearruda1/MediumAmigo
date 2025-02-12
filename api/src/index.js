@@ -2,6 +2,7 @@ import express from 'express';
 import userRouter from './routes/user.js';
 import authRouter from './routes/auth.js';
 import postRouter from './routes/post.js';
+import uploadRouter from './routes/upload.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -28,6 +29,7 @@ app.use(cookieParser())
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/post/", postRouter)
+app.use("/api/upload/", uploadRouter)
 
 app.listen(8001, () => {
     console.log("Servidor rodando na porta 8001!");
