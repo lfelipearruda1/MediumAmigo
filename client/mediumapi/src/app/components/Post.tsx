@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { FaHeart, FaBookmark, FaComment } from 'react-icons/fa';
+import { UserContext } from '../context/UserContext';
+import moment from 'moment';
+import 'moment/locale/pt-br';
 
 interface IPost {
   id: number;
@@ -47,9 +50,6 @@ function Post(props: { post: IPost }) {
     setModalImage("");
   };
 
-  let date = new Date(created_at);
-  let formatedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
       <header className="flex items-start mb-4">
@@ -62,7 +62,7 @@ function Post(props: { post: IPost }) {
           <span className="font-semibold text-lg">{username}</span>
         </div>
         <div className="ml-auto text-sm text-gray-500">
-          <span>{formatedDate}</span>
+          <span>{moment(created_at).fromNow()}</span>
         </div>
       </header>
 

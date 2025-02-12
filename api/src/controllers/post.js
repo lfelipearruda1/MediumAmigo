@@ -21,7 +21,7 @@ export const creatPost = (req, res) => {
 };
 
 export const getPost = (req, res) => {
-  const query = "SELECT * FROM posts";
+  const query = "SELECT p.*, username, userImg FROM posts as p JOIN user as u ON (u.id = p.userId) ORDER BY created_at DESC";
 
   db.query(query, (error, data) => {
     if (error) {
