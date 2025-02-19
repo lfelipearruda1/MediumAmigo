@@ -1,3 +1,5 @@
 import LoginPage from "./login";
 
-export default LoginPage;
+export default function Page() {
+  return <LoginPage />;
+}

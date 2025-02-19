@@ -13,6 +13,7 @@ export function RegisterController() {
         password: "",
         confirmPassword: ""
     });
+    const [loading, setLoading] = useState(false);
 
     const validateFields = () => {
         let valid = true;
@@ -43,16 +44,18 @@ export function RegisterController() {
         e.preventDefault();
         
         if (!validateFields()) return;
-        
+        setLoading(true);
+
         try {
-            const response = await fetch("/api/register", {
+            const response = await fetch("/api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, email, password })
             });
             
             if (!response.ok) {
-                throw new Error("Erro no cadastro");
+                const errorData = await response.json();
+                throw new Error(errorData.msg || "Erro no cadastro");
             }
             
             alert("Cadastro realizado com sucesso!");
@@ -60,8 +63,10 @@ export function RegisterController() {
             setEmail("");
             setPassword("");
             setConfirmPassword("");
-        } catch (error) {
-            alert("Erro ao cadastrar. Tente novamente.");
+        } catch (error: any) {
+            alert(error.message || "Erro ao cadastrar. Tente novamente.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -71,6 +76,7 @@ export function RegisterController() {
         password, setPassword,
         confirmPassword, setConfirmPassword,
         errors,
-        handleRegister
+        handleRegister,
+        loading
     };
 }

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export const checkRefreshToken = (req, res, next) => {
+export const verifyRefreshToken = (req, res, next) => {
   const authHeader = req.headers.cookie?.split("; ")[1]
   const refresh = authHeader && authHeader.split("=")[1]
 

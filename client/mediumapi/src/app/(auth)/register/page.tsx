@@ -1,3 +1,5 @@
-import { RegisterController } from "./registerController";
+import RegisterPage from "./register";
 
-export default RegisterController;
+export default function Page() {
+  return <RegisterPage />;
+}
